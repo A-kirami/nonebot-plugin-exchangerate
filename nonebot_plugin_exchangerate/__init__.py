@@ -1,3 +1,4 @@
+import contextlib
 from typing import Any, Dict
 
 from nonebot import on_endswith, on_fullmatch, on_regex
@@ -11,12 +12,10 @@ exchange = on_regex(r"(?P<amount>^\d+\.?\d*)(?P<currency>[\u4e00-\u9fff]{1,5}$)"
 
 @exchange.handle()
 async def _(matched: Dict[str, Any] = RegexDict()) -> None:
-    try:
+    with contextlib.suppress(ValueError):
         total = exchange_currency(matched["currency"], float(matched["amount"]))
         msg = f"{total}人民币"
-    except ValueError as e:
-        msg = str(e)
-    await exchange.send(msg, reply_message=True)
+        await exchange.send(msg, reply_message=True)
 
 
 info = on_endswith("汇率")
