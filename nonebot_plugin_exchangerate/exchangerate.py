@@ -67,7 +67,11 @@ update_time = ""
 
 
 @scheduler.scheduled_job(
-    "interval", minutes=30, args=[config.exchange_app_key], next_run_time=datetime.now()
+    "interval",
+    minutes=30,
+    args=[config.exchange_app_key],
+    next_run_time=datetime.now(),
+    misfire_grace_time=30,
 )
 async def fetch_exchange(app_key: str) -> None:
     async with httpx.AsyncClient() as client:
